@@ -1,0 +1,49 @@
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+yarn.lock
+# package-lock.json # Uncomment if you want to ignore it
+
+# SQLite database files
+database.db
+sessions.db
+*.sqlite
+*.db
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Logs
+logs/
+*.log
+*.log.*
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*~
+
+# Build artifacts
+dist/
+build/
+coverage/
+
+# Editor and IDE files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Session storage (if using connect-sqlite3)
+sessions/
+
+# Local development configs
+*.local
