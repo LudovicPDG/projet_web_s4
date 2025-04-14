@@ -1,0 +1,20 @@
+{{>partials/header}}
+
+<h2>{{#document}}Modifier Document{{/document}}{{^document}}Nouveau Document{{/document}}</h2>
+
+<form action="{{#document}}/document/{{document.id}}/edit{{/document}}{{^document}}/document/new{{/document}}" method="POST">
+    <label for="title">Titre :</label>
+    <input type="text" id="title" name="title" value="{{document.title}}" required>
+
+    <label for="content">Contenu :</label>
+    <textarea id="content" name="content" rows="10" required>{{document.content}}</textarea>
+
+    <button type="submit" class="button">Enregistrer</button>
+</form>
+
+{{#error}}
+<div class="error-message">{{error}}</div>
+{{/error}}
+
+{{>partials/footer}}
+

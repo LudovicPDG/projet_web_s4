@@ -1,0 +1,32 @@
+{{>partials/header}}
+
+<h2>{{quiz.title}}</h2>
+
+<form action="/quiz/{{quiz.id}}/submit" method="POST">
+    {{#quiz.questions}}
+        <div class="quiz-question">
+            <p><strong>{{question}}</strong></p>
+            <div class="quiz-options">
+                <label class="quiz-option">
+                    <input type="radio" name="question_{{id}}" value="{{correct_answer}}">
+                    {{correct_answer}}
+                </label>
+                {{#incorrect_answers}}
+                <label class="quiz-option">
+                    <input type="radio" name="question_{{id}}" value="{{.}}">
+                    {{.}}
+                </label>
+                {{/incorrect_answers}}
+            </div>
+        </div>
+    {{/quiz.questions}}
+
+    <button type="submit" class="button">Soumettre</button>
+</form>
+
+{{^quiz.questions}}
+<p>Aucune question disponible pour ce quiz.</p>
+{{/quiz.questions}}
+
+{{>partials/footer}}
+

@@ -1,0 +1,18 @@
+{{>partials/header}}
+
+<h1>Mes documents</h1>
+<a href="/document/new" class="button">Nouveau document</a>
+
+{{#documents}}
+<div class="document-card">
+    <h3><a href="/document/{{id}}">{{title}}</a></h3>
+    <p>{{content}}</p>
+</div>
+{{/documents}}
+
+{{^documents}}
+<p>Aucun document créé pour le moment.</p>
+{{/documents}}
+
+{{>partials/footer}}
+

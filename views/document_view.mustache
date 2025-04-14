@@ -1,0 +1,17 @@
+{{>partials/header}}
+
+<div class="document-actions">
+    <a href="/document/{{document.id}}/edit" class="button">Éditer</a>
+    <form action="/document/{{document.id}}/flashcards" method="POST">
+        <button type="submit">Générer Flashcards</button>
+    </form>
+    <form action="/document/{{document.id}}/quiz" method="POST">
+        <button type="submit">Générer Quiz</button>
+    </form>
+</div>
+
+<h2>{{document.title}}</h2>
+<pre class="document-content">{{document.content}}</pre>
+
+{{>partials/footer}}
+

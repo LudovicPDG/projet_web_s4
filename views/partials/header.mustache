@@ -1,0 +1,14 @@
+<header>
+    <nav>
+        <a href="/">Accueil</a>
+        {{#userId}}
+            <a href="/">Tableau de bord</a>
+            <a href="/logout">Déconnexion</a>
+        {{/userId}}
+        {{^userId}}
+            <a href="/login">Connexion</a>
+            <a href="/register">Inscription</a>
+        {{/userId}}
+    </nav>
+</header>
+

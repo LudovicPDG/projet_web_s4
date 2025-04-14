@@ -1,0 +1,19 @@
+{{>partials/header}}
+
+<h2>Flashcards</h2>
+
+<div class="flashcard-list">
+    {{#flashcards}}
+    <div class="flashcard">
+        <p><strong>Question :</strong> {{question}}</p>
+        <p><strong>Réponse :</strong> {{answer}}</p>
+    </div>
+    {{/flashcards}}
+
+    {{^flashcards}}
+    <p>Aucune flashcard générée pour ce document.</p>
+    {{/flashcards}}
+</div>
+
+{{>partials/footer}}
+
