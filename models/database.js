@@ -1,11 +1,66 @@
 const sqlite3 = require("sqlite3").verbose();
+const fs = require('fs');
+const path = require('path');
 
 // Connexion à la base de données SQLite
 const db = new sqlite3.Database("./database.db", (err) => {
   if (err) {
     console.error("Erreur de connexion à la base de données:", err.message);
+  } else {
+    console.log("Connexion à la base de données SQLite établie");
   }
 });
+
+// Fonction pour initialiser la base de données
+const initializeDatabase = () => {
+  return new Promise((resolve, reject) => {
+    // Activer le mode foreign keys
+    db.run('PRAGMA foreign_keys = ON');
+    
+    // Vérifier si la table users existe déjà
+    db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='users'", (err, row) => {
+      if (err) {
+        console.error("Erreur lors de la vérification des tables:", err.message);
+        return reject(err);
+      }
+      
+      // Si la table users existe déjà, on considère que la structure est déjà en place
+      if (row) {
+        console.log("Les tables existent déjà dans la base de données");
+        return resolve();
+      }
+      
+      // Si la table n'existe pas, on exécute les migrations
+      const migrationFilePath = path.join(__dirname, '../migrations/first_migration.sql');
+      
+      fs.readFile(migrationFilePath, 'utf8', (err, data) => {
+        if (err) {
+          console.error("Erreur lors de la lecture du fichier de migration:", err.message);
+          return reject(err);
+        }
+        
+        // Exécuter les requêtes de migration
+        db.serialize(() => {
+          // Séparation des instructions SQL
+          const queries = data.split(';').filter(query => query.trim().length > 0);
+          
+          // Exécution de chaque requête
+          for (const query of queries) {
+            db.run(query, function(err) {
+              if (err) {
+                console.error("Erreur lors de l'exécution de la migration:", err.message);
+                console.error("Requête problématique:", query);
+              }
+            });
+          }
+          
+          console.log("Migration de la base de données terminée");
+          resolve();
+        });
+      });
+    });
+  });
+};
 
 // Fonction utilitaire pour exécuter des requêtes SQL avec des promesses
 const runQuery = (query, params = []) => {
@@ -278,4 +333,5 @@ module.exports = {
   get_flashcards,
   generate_quiz,
   get_quiz,
+  initializeDatabase,
 };

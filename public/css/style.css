@@ -1,110 +1,404 @@
-/* Style global */
-body {
-    font-family: Arial, sans-serif;
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
+/* Variables pour les couleurs et dimensions */
+:root {
+    --primary-color: #3498db;
+    --secondary-color: #2c3e50;
+    --accent-color: #e74c3c;
+    --background-color: #f9f9f9;
+    --text-color: #333;
+    --border-color: #ddd;
+    --success-color: #2ecc71;
+    --warning-color: #f39c12;
+    --error-color: #e74c3c;
+    --box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    --transition-speed: 0.3s;
+    --border-radius: 8px;
+    --padding-container: 5vw;
 }
 
-/* Structure de la page */
+/* Reset et style global */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
 html, body {
     height: 100%;
-    margin: 0;
+    width: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Style de container principal */
+.container {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 var(--padding-container);
+}
+
+/* Header et Navigation */
+header {
+    background-color: var(--secondary-color);
+    color: white;
+    width: 100%;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--box-shadow);
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem var(--padding-container);
+    flex-wrap: wrap;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin: 0 1rem;
+    font-weight: 500;
+    position: relative;
+    padding: 0.5rem 0;
+    transition: all var(--transition-speed) ease;
+}
+
+nav a:hover {
+    color: var(--primary-color);
+}
+
+nav a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    background-color: var(--primary-color);
+    bottom: 0;
+    left: 0;
+    transition: width var(--transition-speed) ease;
+}
+
+nav a:hover::after {
+    width: 100%;
+}
+
+/* Main Content */
+main {
+    flex: 1;
+    width: 100%;
+    max-width: 1400px;
+    margin: 2rem auto;
+    padding: 0 var(--padding-container);
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--secondary-color);
+    margin-bottom: 1rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 3px solid var(--primary-color);
+    padding-bottom: 0.5rem;
+    display: inline-block;
+}
+
+p {
+    margin-bottom: 1.5rem;
+}
+
+/* Buttons */
+.button {
+    display: inline-block;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border-radius: var(--border-radius);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all var(--transition-speed) ease;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1.5rem;
+}
+
+.button:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.button-secondary {
+    background-color: var(--secondary-color);
+}
+
+.button-secondary:hover {
+    background-color: #1a252f;
+}
+
+.button-danger {
+    background-color: var(--error-color);
+}
+
+.button-danger:hover {
+    background-color: #c0392b;
+}
+
+/* Forms */
+form {
+    background-color: white;
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    max-width: 600px;
+    margin: 0 auto 2rem auto;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 0.8rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    font-family: inherit;
+    font-size: 1rem;
+    transition: border-color var(--transition-speed) ease;
+}
+
+input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.3);
+}
+
+textarea {
+    min-height: 150px;
+    resize: vertical;
+}
+
+/* Document cards */
+.documents-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.document-card {
+    background-color: white;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--box-shadow);
+    transition: all var(--transition-speed) ease;
+    height: 100%;
     display: flex;
     flex-direction: column;
 }
 
-main {
-    flex: 1; /* Le contenu principal prend tout l'espace disponible */
+.document-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
 }
 
-/* Navigation */
-nav {
-    margin-bottom: 30px;
-    padding: 10px;
-    background: #f0f0f0;
+.document-card h3 {
+    padding: 1.5rem 1.5rem 0.5rem 1.5rem;
+    margin: 0;
+}
+
+.document-card p {
+    padding: 0 1.5rem 1.5rem;
+    margin: 0;
+    color: #666;
+    flex-grow: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.document-card a {
+    color: var(--secondary-color);
+    text-decoration: none;
+    transition: color var(--transition-speed) ease;
+}
+
+.document-card a:hover {
+    color: var(--primary-color);
+}
+
+/* Flashcards */
+.flashcards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+}
+
+.flashcard {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    cursor: pointer;
+    transition: all var(--transition-speed) ease;
+    height: 200px;
+    position: relative;
+}
+
+.flashcard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+.flashcard.flipped .flashcard-inner {
+    transform: rotateY(180deg);
+}
+
+.flashcard-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+}
+
+.flashcard-front, .flashcard-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.flashcard-front {
+    background-color: #f8f9fa;
+}
+
+.flashcard-back {
+    background-color: var(--primary-color);
+    color: white;
+    transform: rotateY(180deg);
+}
+
+/* Quiz styles */
+.quiz-question {
+    background-color: white;
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    box-shadow: var(--box-shadow);
+    margin-bottom: 2rem;
+}
+
+.quiz-option {
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all var(--transition-speed) ease;
+    margin-bottom: 0.8rem;
+}
+
+.quiz-option:hover {
+    background-color: #e9ecef;
+}
+
+.quiz-option.selected {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Messages */
+.error-message {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: var(--border-radius);
+    background-color: rgba(231, 76, 60, 0.1);
+    color: var(--error-color);
+    border: 1px solid var(--error-color);
+    text-align: center;
+}
+
+.success-message {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: var(--border-radius);
+    background-color: rgba(46, 204, 113, 0.1);
+    color: var(--success-color);
+    border: 1px solid var(--success-color);
+    text-align: center;
 }
 
 /* Footer */
 footer {
-    background-color: #f0f0f0;
+    background-color: var(--secondary-color);
+    color: #ecf0f1;
     text-align: center;
-    padding: 10px;
+    padding: 1.5rem var(--padding-container);
+    width: 100%;
+    margin-top: 3rem;
 }
 
-/* Cartes de documents */
-.document-card {
-    border: 1px solid #ddd;
-    padding: 15px;
-    margin: 10px 0;
-    border-radius: 5px;
+/* Responsive design */
+@media (max-width: 768px) {
+    nav {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    nav a {
+        margin: 0.5rem 0;
+    }
+    
+    .documents-grid, .flashcards-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
+    
+    h1 {
+        font-size: 2rem;
+    }
+    
+    form, .quiz-container {
+        padding: 1.5rem;
+    }
 }
 
-/* Flashcards */
-.flashcard {
-    border: 1px solid #ccc;
-    padding: 20px;
-    margin: 10px;
-    cursor: pointer;
-    transition: transform 0.3s ease-in-out;
-}
-
-/* Questions de quiz */
-.quiz-question {
-    margin: 20px 0;
-    padding: 15px;
-    background: #f8f8f8;
-}
-
-/* Messages d'erreur */
-.error-message {
-    color: #ff4d4d; 
-    background-color: #ffe6e6;
-    padding: 10px;
-    border: 1px solid #ff4d4d;
-    border-radius: 5px;
-    font-size: 14px;
-    margin-top: 10px;
-    text-align: center;
-}
-
-/* Boutons */
-.button {
-    background-color: #04AA6D;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease-in-out;
-}
-
-.button:hover {
-    background-color: #028a56; 
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-/* Options de quiz */
-.quiz-option {
-    padding: 15px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #f9f9f9;
-    cursor: pointer;
-    transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
-}
-
-.quiz-option:hover {
-    background-color: #e6f7ff;
-}
-
-.quiz-option.selected {
-    background-color: #cceeff;
+@media (max-width: 480px) {
+    .documents-grid, .flashcards-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    main {
+        padding: 0 1rem;
+    }
+    
+    h1 {
+        font-size: 1.8rem;
+    }
+    
+    .button {
+        padding: 0.7rem 1.2rem;
+    }
 }
 
 

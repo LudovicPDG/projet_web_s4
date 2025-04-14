@@ -1,5 +1,7 @@
+{{>partials/head}}
 {{>partials/header}}
 
+<main>
 <h2>{{#document}}Modifier Document{{/document}}{{^document}}Nouveau Document{{/document}}</h2>
 
 <form action="{{#document}}/document/{{document.id}}/edit{{/document}}{{^document}}/document/new{{/document}}" method="POST">
@@ -15,6 +17,7 @@
 {{#error}}
 <div class="error-message">{{error}}</div>
 {{/error}}
+</main>
 
 {{>partials/footer}}
 
