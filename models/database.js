@@ -1,6 +1,8 @@
 const sqlite3 = require("sqlite3").verbose();
 const fs = require('fs');
 const path = require('path');
+const axios = require("axios");
+const { huggingfaceApiKey } = require("../config");
 
 // Connexion à la base de données SQLite
 const db = new sqlite3.Database("./database.db", (err) => {
@@ -194,32 +196,41 @@ async function get_document(document_id) {
   }
 }
 
-// 7. generate_flashcards(document_id): génère des flashcards à partir du contenu du document en utilisant l'IA
+// Fonction pour générer des flashcards via Bloom
 async function generate_flashcards(document_id) {
   try {
-    // Récupérer le document
-    const document = await get_document(document_id);
-    if (!document) {
-      return [];
-    }
+    const document = await getOneQuery(
+      "SELECT id, user_id, content FROM documents WHERE id = ?",
+      [document_id]
+    );
+    if (!document) return [];
 
-    // Simulation d'une génération par IA (à remplacer par une vraie intégration d'IA)
-    const fakeFlashcards = [
-      { question: "Quelle est la capitale de la France ?", answer: "Paris" },
-      { question: "Quelle est la capitale de l’Italie ?", answer: "Rome" },
-    ];
+    const content = document.content;
 
-    // Enregistrer les flashcards
-    for (const card of fakeFlashcards) {
+    // Appel à l'API Hugging Face avec Bloom pour générer des flashcards
+    const response = await axios.post(
+      "https://api-inference.huggingface.co/models/bigscience/bloom",
+      { inputs: `Génère des flashcards basées sur ce texte : ${content}` },
+      { headers: { Authorization: `Bearer ${huggingfaceApiKey}` } }
+    );
+
+    const flashcardsText = response.data.choices[0].text.trim();
+    const flashcards = flashcardsText.split("\n").map((line) => {
+      const [question, answer] = line.split(":");
+      return { question: question.trim(), answer: answer.trim() };
+    });
+
+    // Enregistrer les flashcards dans la base de données
+    for (const card of flashcards) {
       await runQuery(
         "INSERT INTO flashcards (user_id, question, answer) VALUES (?, ?, ?)",
         [document.user_id, card.question, card.answer]
       );
     }
 
-    return fakeFlashcards;
+    return flashcards;
   } catch (err) {
-    console.error("Erreur lors de la génération des flashcards:", err.message);
+    console.error("Erreur lors de la génération des flashcards via l'IA :", err.message);
     return [];
   }
 }
@@ -246,51 +257,56 @@ async function get_flashcards(document_id) {
   }
 }
 
-// 9. generate_quiz(document_id): génère un quiz à partir du contenu du document
+// Fonction pour générer un quiz via Bloom
 async function generate_quiz(document_id) {
   try {
-    const document = await get_document(document_id);
-    if (!document) {
-      return -1;
-    }
+    const document = await getOneQuery(
+      "SELECT id, user_id, content FROM documents WHERE id = ?",
+      [document_id]
+    );
+    if (!document) return -1;
 
-    // Simulation d'un titre de quiz
+    const content = document.content;
+
+    // Appel à l'API Hugging Face avec Bloom pour générer un quiz
+    const response = await axios.post(
+      "https://api-inference.huggingface.co/models/bigscience/bloom",
+      { inputs: `Génère un quiz basé sur ce texte : ${content}. Fournis chaque question avec une réponse correcte et trois réponses incorrectes.` },
+      { headers: { Authorization: `Bearer ${huggingfaceApiKey}` } }
+    );
+
+    const quizText = response.data.choices[0].text.trim();
+    const quizQuestions = quizText.split("\n").map((line) => {
+      const [questionPart, answersPart] = line.split(":");
+      const [correctAnswer, ...incorrectAnswers] = answersPart.split(",");
+      return {
+        question: questionPart.trim(),
+        correct_answer: correctAnswer.trim(),
+        incorrect_answers: incorrectAnswers.map((ans) => ans.trim()),
+      };
+    });
+
     const quizTitle = `Quiz sur ${document.title}`;
-
-    // Créer un quiz
     const quizId = await runQuery(
       "INSERT INTO quizzes (user_id, title) VALUES (?, ?)",
       [document.user_id, quizTitle]
     );
 
-    // Simulation de questions générées par IA
-    const fakeQuestions = [
-      {
-        question: "Quelle est la capitale de la France ?",
-        correct_answer: "Paris",
-        incorrect_answers: "Lyon,Marseille,Nice",
-      },
-      {
-        question: "Quelle est la capitale de l’Italie ?",
-        correct_answer: "Rome",
-        incorrect_answers: "Milan,Venise,Naples",
-      },
-    ];
-
-    // Enregistrer les questions
-    for (const q of fakeQuestions) {
+    // Enregistrer les questions du quiz dans la base de données
+    for (const q of quizQuestions) {
       await runQuery(
         "INSERT INTO quiz_questions (quiz_id, question, correct_answer, incorrect_answers) VALUES (?, ?, ?, ?)",
-        [quizId, q.question, q.correct_answer, q.incorrect_answers]
+        [quizId, q.question, q.correct_answer, q.incorrect_answers.join(",")]
       );
     }
 
     return quizId;
   } catch (err) {
-    console.error("Erreur lors de la génération du quiz:", err.message);
+    console.error("Erreur lors de la génération du quiz via l'IA :", err.message);
     return -1;
   }
 }
+
 
 // 10. get_quiz(quiz_id): retourne les détails d'un quiz et ses questions
 async function get_quiz(quiz_id) {

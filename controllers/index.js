@@ -215,18 +215,15 @@ async function editDocumentPostController(req, res) {
 // Contrôleur pour POST /document/:id/flashcards : Génère des flashcards
 async function generateFlashcardsController(req, res) {
   try {
-    if (!req.session.userId) {
-      return res.redirect("/login");
-    }
+    if (!req.session.userId) return res.redirect("/login");
+
     const documentId = req.params.id;
-    const document = await get_document(documentId);
-    if (!document || document.user_id !== req.session.userId) {
-      return res.redirect("/");
-    }
-    await generate_flashcards(documentId); // Appeler le modèle
-    res.redirect(`/document/${documentId}/flashcards`); // Rediriger vers les flashcards
+    const flashcards = await generate_flashcards(documentId);
+
+    if (flashcards.length > 0) res.redirect(`/document/${documentId}/flashcards`);
+    else res.render("flashcards", { error: "Aucune flashcard générée." });
   } catch (err) {
-    console.error("Erreur dans generateFlashcardsController:", err.message);
+    console.error("Erreur dans generateFlashcardsController :", err.message);
     res.redirect(`/document/${req.params.id}`);
   }
 }
@@ -259,25 +256,19 @@ async function viewFlashcardsController(req, res) {
 // Contrôleur pour POST /document/:id/quiz : Génère un quiz
 async function generateQuizController(req, res) {
   try {
-    if (!req.session.userId) {
-      return res.redirect("/login");
-    }
+    if (!req.session.userId) return res.redirect("/login");
+
     const documentId = req.params.id;
-    const document = await get_document(documentId);
-    if (!document || document.user_id !== req.session.userId) {
-      return res.redirect("/");
-    }
-    const quizId = await generate_quiz(documentId); // Appeler le modèle
-    if (quizId !== -1) {
-      res.redirect(`/quiz/${quizId}`); // Rediriger vers le quiz
-    } else {
-      res.redirect(`/document/${documentId}`);
-    }
+    const quizId = await generate_quiz(documentId);
+
+    if (quizId !== -1) res.redirect(`/quiz/${quizId}`);
+    else res.render("quiz", { error: "Aucun quiz généré." });
   } catch (err) {
-    console.error("Erreur dans generateQuizController:", err.message);
+    console.error("Erreur dans generateQuizController :", err.message);
     res.redirect(`/document/${req.params.id}`);
   }
 }
+
 
 // Contrôleur pour GET /quiz/:id : Affiche le quiz
 async function viewQuizController(req, res) {
